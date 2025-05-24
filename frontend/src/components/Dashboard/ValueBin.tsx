@@ -104,11 +104,11 @@ const ValueBin: React.FC<ValueBinProps> = ({ agentLogs }) => {
   }, [agentLogs]);
 
   return (
-    <Paper sx={{ p: 2, borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h6" sx={{ mb: 2, flexShrink: 0 }}>
-        价值仓 (日志分类汇总)
+    <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h5" gutterBottom sx={{ color: '#4A90E2', fontWeight: 'bold' }}>
+        AI agent检测指标 (日志分类汇总)
       </Typography>
-      <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', maxHeight: 'calc(100vh - 280px)', pr: 1 }}>
         <Stack direction="column" spacing={1.5} useFlexGap>
           {PREDEFINED_CATEGORIES.map(({ type, icon, color }) => {
             const logsForType = categorizedLogs[type] || [];
