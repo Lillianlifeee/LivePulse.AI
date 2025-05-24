@@ -24,23 +24,8 @@ from app.routers import chat as chat_router # Assuming chat.py is in backend/app
 # Initialize FastAPI app
 app = FastAPI(title="LivePulse.AI - Live Stream Sales Management")
 
-# 创建一个事件循环引用
-loop = None
 # 创建一个运行状态标志
-running = True
-
-def signal_handler(signum, frame):
-    """处理退出信号"""
-    global running
-    print("\n正在优雅关闭服务器...")
-    running = False
-    if loop:
-        loop.stop()
-    sys.exit(0)
-
-# 注册信号处理器
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
+running = True # This will be controlled by startup/shutdown events now
 
 # Add CORS middleware
 app.add_middleware(
@@ -474,33 +459,52 @@ async def simulate_data():
 
 @app.on_event("startup")
 async def startup_event():
-    global loop
-    loop = asyncio.get_event_loop()
-    asyncio.create_task(simulate_data())
+    # global loop # No longer needed
+    # loop = asyncio.get_event_loop() # No longer needed
+    global running
+    running = True # Ensure running is true at startup
+    app.state.simulation_task = asyncio.create_task(simulate_data())
+    print("Data simulation task started.")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    global running, loop
-    print("服务器正在关闭...")
-    running = False
-    # Properly stop the asyncio loop if it's running and it's the main loop
-    if loop and loop.is_running():
-        # Give tasks a chance to clean up
-        tasks = [t for t in asyncio.all_tasks(loop) if t is not asyncio.current_task(loop)]
-        if tasks:
-            print(f"等待 {len(tasks)} 个后台任务完成...")
-            await asyncio.wait(tasks, timeout=5.0) # Wait up to 5 seconds
-        loop.stop()
-        print("事件循环已停止。")
-    print("清理完成，服务器已关闭。")
+    global running
+    # global loop # No longer needed
+    print("服务器正在关闭 (shutdown_event)...")
+    running = False # Signal the simulation loop to stop
+
+    if hasattr(app.state, "simulation_task") and app.state.simulation_task:
+        print("Waiting for simulation task to complete...")
+        try:
+            await asyncio.wait_for(app.state.simulation_task, timeout=5.0) # Wait for 5 seconds
+            print("Simulation task completed.")
+        except asyncio.TimeoutError:
+            print("Simulation task did not complete in time, cancelling.")
+            app.state.simulation_task.cancel()
+            try:
+                await app.state.simulation_task
+            except asyncio.CancelledError:
+                print("Simulation task successfully cancelled.")
+        except Exception as e:
+            print(f"Error during simulation task shutdown: {e}")
+    
+    # Remove manual loop stop, Uvicorn handles its own loop.
+    # if loop and loop.is_running():
+    #     tasks = [t for t in asyncio.all_tasks(loop) if t is not asyncio.current_task(loop)]
+    #     if tasks:
+    #         print(f"等待 {len(tasks)} 个后台任务完成...")
+    #         await asyncio.wait(tasks, timeout=5.0) 
+    #     loop.stop()
+    #     print("事件循环已停止。")
+    print("清理完成，服务器已关闭 (shutdown_event).")
 
 
 if __name__ == "__main__":
     # This part is for direct execution (e.g., python main.py)
-    # The start.sh script uses `uvicorn main:app`, so it targets the 'app' object specifically.
+    # The start.sh script uses `uvicorn main:application`, so it targets the 'application' object specifically.
     # To run with uvicorn and serve the 'application' (Socket.IO wrapped),
     # the command should be `uvicorn main:application`
-    print("Starting server with Uvicorn...")
-    loop = asyncio.get_event_loop()
+    print("Starting server with Uvicorn (from if __name__ == \"__main__\")...")
+    # loop = asyncio.get_event_loop() # Not needed when Uvicorn manages the loop
     uvicorn.run(application, host="0.0.0.0", port=8200, loop="asyncio") 

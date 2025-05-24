@@ -34,9 +34,11 @@ pip install -r requirements.txt
 pip install python-socketio fastapi uvicorn python-dotenv deepseek-ai
 
 # 启动后端
+# python -m uvicorn main:application --reload --port 8200 --host 0.0.0.0 &
 python -m uvicorn main:application --reload --port 8200 --host 0.0.0.0 &
 
 # 等待后端启动
+echo "Waiting for backend to start on port 8200..."
 sleep 2
 
 # 启动前端
