@@ -48,8 +48,22 @@ const Sidebar: React.FC = () => {
       <Toolbar>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
           <FlashOnIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
-          <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
-            LivePulse.AI
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            PulseCast
           </Typography>
         </Box>
       </Toolbar>

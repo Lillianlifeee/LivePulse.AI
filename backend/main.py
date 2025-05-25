@@ -439,6 +439,30 @@ async def simulate_data():
                     log = generate_agent_log(room_id, *insight)
                     if log:
                         await sio.emit("agent_log", log)
+
+                # 模拟生成仓储管理相关的日志
+                if random.random() < 0.08:  # 8% 的概率生成仓储管理日志
+                    management_actions = [
+                        ("智能补货系统监测到 {} 库存水平健康，无需额外操作。", "库存状态良好"),
+                        ("正在对 {} 的仓储流程进行例行优化检查。", "流程优化"),
+                        ("AI分析了 {} 的出库效率，建议调整拣货路径。", "效率提升建议"),
+                        ("根据销售趋势，已为 {} 预留额外存储空间。", "空间预留")
+                    ]
+                    # 随机选择一个商品进行仓储管理日志生成
+                    if room.products:
+                        target_product_name = random.choice(room.products)["name"]
+                        action_template, impact_template = random.choice(management_actions)
+                        message = action_template.format(target_product_name)
+                        impact = impact_template
+
+                        log = generate_agent_log(
+                            room_id,
+                            "仓储管理", # 确保 action_type 与前端 PREDEFINED_CATEGORIES 匹配
+                            message,
+                            impact
+                        )
+                        if log:
+                            await sio.emit("agent_log", log)
             
             # Update global stats
             total_viewers = sum(room.viewers for room in live_rooms.values())
