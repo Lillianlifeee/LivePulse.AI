@@ -96,7 +96,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <DashboardIcon sx={{ mr: 1 }} />
             <Typography variant="h6" noWrap component="div">
-              PulseCast 直播运营控制中心
+              PulseCast: AI 直播运营控制中心
             </Typography>
           </Box>
           

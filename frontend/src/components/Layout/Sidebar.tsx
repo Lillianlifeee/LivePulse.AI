@@ -63,7 +63,7 @@ const Sidebar: React.FC = () => {
               textDecoration: 'none',
             }}
           >
-            PulseCast
+            PulseCast AI
           </Typography>
         </Box>
       </Toolbar>
