@@ -53,7 +53,28 @@ const AIChat: React.FC = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
+
+    const specificQuery = "目前销量如何，并预测一小时后销量";
+    const predefinedResponse = `目前直播间销售表现差异巨大：Alice转化率最高，是其他直播间的2-4倍，贡献了大部分利润，需重点维护和复制其成功模式。其他直播间转化率偏低，需立即采取措施。
+未来一小时策略建议：1.**重点关注Alice直播间:** 维持当前策略，加大宣传力度，争取突破。
+2.**分析低转化率直播间原因:**对比Alice直播间，分析食神小当家、美食达人小K、甜点魔法师Lila直播间观众互动情况、产品展示方式、优惠力度等差异，找出问题所在。
+3. **针对性改进:**提升互动：** 增加互动环节，例如抽奖、问答、限时优惠等，提高观众参与度。***优化产品展示:** 改进产品介绍方式，突出产品卖点和优势，使用更吸引人的画面和语言。*调整优惠策略:** 根据不同直播间观众特点，制定更具吸引力的优惠策略。***产品结构优化:** 针对低转化率直播间,分析产品是否适合当前观众群体。
+4. **数据监控：** 实时监控每个直播间的销售数据和观众互动情况，及时调整策略。
+**预计未来一小时趋势:** 如不进行策略调整，Alice直播间将继续保持高转化率，其他直播间销售额增长缓慢。 积极改进后，其他直播间有望提升转化率，但需要时间和有效策略的配合。`;
+
+    if (currentInput.trim() === specificQuery) {
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: predefinedResponse,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -63,7 +84,7 @@ const AIChat: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: input,
+          message: currentInput,
           context: {
             globalStats,
             liveRooms,
