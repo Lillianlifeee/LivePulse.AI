@@ -1,6 +1,6 @@
-# LivePulse.AI - 直播带货销售预测与管理系统
+# PulseCast - 直播带货销售预测与管理系统
 
-LivePulse.AI 是一个实时直播带货销售预测与管理系统的演示项目，它展示了 AI Agent 如何作为"全局掌控者"监控、预测和管理多个直播间的销售情况。
+PulseCast 是一个实时直播带货销售预测与管理系统的演示项目，它展示了 AI Agent 如何作为"全局掌控者"监控、预测和管理多个直播间的销售情况。
 
 ## 项目特点
 
@@ -99,7 +99,7 @@ npm start
 ## 项目结构
 
 ```
-LivePulse.AI/
+PulseCast/
 ├── backend/                # 后端代码
 │   ├── main.py             # 主服务器入口
 │   ├── event_triggers.py   # 事件触发器逻辑
